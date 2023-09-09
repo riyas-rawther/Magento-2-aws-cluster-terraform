@@ -38,6 +38,7 @@ provider "aws" {
    Environment  = "development"
   }
  }
+}
 provider "null" {}
 provider "random" {}
 provider "template" {}

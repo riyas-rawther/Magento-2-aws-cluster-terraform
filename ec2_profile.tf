@@ -64,7 +64,7 @@ resource "aws_iam_role_policy" "ses_send" {
   role = aws_iam_role.ec2[each.key].id
 
   policy = jsonencode({
-{
+
   Version = "2012-10-17",
   Statement = [
     {
