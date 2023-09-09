@@ -8,7 +8,7 @@
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "aws_wafv2_web_acl" "this" {
   name        = "${local.project}-WAF-Protections"
-  provider    = aws.useast1
+  # provider    = aws.useast2
   scope       = "CLOUDFRONT"
   description = "${local.project}-WAF-Protections"
 
