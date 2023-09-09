@@ -2,7 +2,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0"
+      version = "~> 5.13.0"
     }
     null = {
       source  = "hashicorp/null"
@@ -27,10 +27,12 @@ terraform {
   }
 }
 
-
 provider "aws" {
-  alias  = "useast1"
-  region = "us-east-1"
+#  alias  = "useast2"
+  region = "us-west-2"
+  # access_key = ""
+  # secret_key = ""
+  profile = "alignminds"
   default_tags {
     tags = {
       Managed     = "terraform"
