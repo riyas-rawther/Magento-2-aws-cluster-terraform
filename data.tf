@@ -27,13 +27,13 @@ data "aws_default_tags" "this" {}
 # Get the list of AWS Availability Zones available in this region
 # # ---------------------------------------------------------------------------------------------------------------------#
 data "aws_availability_zones" "available" {
-  state = "available"
+  state            = "available"
   exclude_zone_ids = ["use1-az3"]
 }
 
 data "aws_availability_zone" "all" {
   for_each = toset(data.aws_availability_zones.available.names)
-  name = each.key
+  name     = each.key
 }
 # # ---------------------------------------------------------------------------------------------------------------------#
 # Get the ID of default VPC
@@ -45,10 +45,10 @@ data "aws_vpc" "default" {
 # Get default subnets from AZ in this region/vpc
 # # ---------------------------------------------------------------------------------------------------------------------#
 data "aws_subnets" "default" {
-   filter {
+  filter {
     name   = "vpc-id"
     values = [data.aws_vpc.default.id]
-   }
+  }
 
   filter {
     name   = "default-for-az"
@@ -62,7 +62,7 @@ data "aws_vpcs" "available" {}
 
 data "aws_vpc" "all" {
   for_each = toset(data.aws_vpcs.available.ids)
-  id = each.key
+  id       = each.key
 }
 # # ---------------------------------------------------------------------------------------------------------------------#
 # Get the ID of default Security Group
@@ -99,10 +99,10 @@ data "aws_cloudfront_cache_policy" "custom" {
 data "aws_ami" "distro" {
   most_recent = true
   #owners      = ["099720109477"] # ubuntu
-  owners      = ["136693071363"] # debian
+  owners = ["136693071363"] # debian
 
   filter {
-    name   = "name"
+    name = "name"
     #values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-arm64-server-*"] # ubuntu
     values = ["debian-12-arm64*"] # debian
   }
@@ -111,13 +111,13 @@ data "aws_ami" "distro" {
 # Get AMI image_id generated from manifest with external data script
 # # ---------------------------------------------------------------------------------------------------------------------#
 data "external" "packer" {
-   depends_on = [null_resource.packer]
-   for_each = var.ec2
-   program = ["/bin/bash", "${abspath(path.root)}/packer/ami_id.sh"] 
-   query = {
+  depends_on = [null_resource.packer]
+  for_each   = var.ec2
+  program    = ["/bin/bash", "${abspath(path.root)}/packer/ami_id.sh"]
+  query = {
     INSTANCE_NAME = each.key
   }
- }
+}
 # # ---------------------------------------------------------------------------------------------------------------------#
 #  Get IP address where Packer Builder is running to add to EC2 security group to allow ssh access
 # # ---------------------------------------------------------------------------------------------------------------------#

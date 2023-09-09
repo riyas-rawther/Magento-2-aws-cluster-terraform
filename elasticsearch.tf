@@ -8,29 +8,29 @@
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "null_resource" "es" {
   provisioner "local-exec" {
-  interpreter = ["/bin/bash", "-c"]
-  command = <<EOF
+    interpreter = ["/bin/bash", "-c"]
+    command     = <<EOF
           exit_code=$(aws iam get-role --role-name AWSServiceRoleForAmazonElasticsearchService > /dev/null 2>&1 ; echo $?)
           if [[ $exit_code -ne 0 ]]; then
           aws iam create-service-linked-role --aws-service-name es.amazonaws.com
           fi
 EOF
- }
+  }
 }
 # # ---------------------------------------------------------------------------------------------------------------------#
 # Create ElasticSearch domain
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "aws_elasticsearch_domain" "this" {
-  depends_on = [null_resource.es]
+  depends_on            = [null_resource.es]
   domain_name           = "${local.project}-elk"
   elasticsearch_version = var.elk["elasticsearch_version"]
   cluster_config {
-    instance_type  = var.elk["instance_type"]
-    instance_count = var.elk["instance_count"]
-  zone_awareness_enabled = var.elk["instance_count"] > 1 ? true : false
-  dynamic "zone_awareness_config" {
-     for_each = var.elk["instance_count"] > 1 ? [var.elk["instance_count"]] : []
-     content {
+    instance_type          = var.elk["instance_type"]
+    instance_count         = var.elk["instance_count"]
+    zone_awareness_enabled = var.elk["instance_count"] > 1 ? true : false
+    dynamic "zone_awareness_config" {
+      for_each = var.elk["instance_count"] > 1 ? [var.elk["instance_count"]] : []
+      content {
         availability_zone_count = var.elk["instance_count"]
       }
     }
@@ -44,7 +44,7 @@ resource "aws_elasticsearch_domain" "this" {
     volume_size = var.elk["volume_size"]
   }
   vpc_options {
-    subnet_ids = slice(values(aws_subnet.this).*.id, 0, var.elk["instance_count"])
+    subnet_ids         = slice(values(aws_subnet.this).*.id, 0, var.elk["instance_count"])
     security_group_ids = [aws_security_group.elk.id]
   }
   tags = {

@@ -13,8 +13,8 @@ resource "aws_codecommit_repository" "app" {
     Name = "${local.project}"
   }
   provisioner "local-exec" {
-  interpreter = ["/bin/bash", "-c"]
-  command = <<EOF
+    interpreter = ["/bin/bash", "-c"]
+    command     = <<EOF
           mkdir -p /tmp/magento && cd /tmp/magento
           git init
           git config --global user.name "${var.app["admin_firstname"]}"
@@ -35,12 +35,12 @@ EOF
 resource "aws_codecommit_repository" "services" {
   repository_name = "${local.project}-services-config"
   description     = "EC2 linux and services configurations"
-    tags = {
+  tags = {
     Name = "${local.project}-services-config"
   }
   provisioner "local-exec" {
-  interpreter = ["/bin/bash", "-c"]
-  command = <<EOF
+    interpreter = ["/bin/bash", "-c"]
+    command     = <<EOF
           cd ${abspath(path.root)}/services/nginx
           git init
           git commit --allow-empty -m "main branch"

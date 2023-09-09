@@ -10,23 +10,23 @@ resource "aws_codestarconnections_connection" "github" {
   for_each      = var.app["install"] == "enabled" ? toset(["enabled"]) : []
   name          = "${local.project}-codestar-connection"
   provider_type = "GitHub"
-  
+
   tags = {
-     Name       = "${local.project}-codestar-connection"
+    Name = "${local.project}-codestar-connection"
   }
 }
 # # ---------------------------------------------------------------------------------------------------------------------#
 # Create CodeBuild project
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "aws_codebuild_project" "install" {
-  for_each               = var.app["install"] == "enabled" ? toset(["enabled"]) : []
-  badge_enabled          = false
-  build_timeout          = 60
-  description            = "${local.project}-codebuild-install-project"
-  name                   = "${local.project}-codebuild-install-project"
-  queued_timeout         = 480
-  depends_on             = [aws_iam_role.codebuild]
-  service_role           = aws_iam_role.codebuild.arn
+  for_each       = var.app["install"] == "enabled" ? toset(["enabled"]) : []
+  badge_enabled  = false
+  build_timeout  = 60
+  description    = "${local.project}-codebuild-install-project"
+  name           = "${local.project}-codebuild-install-project"
+  queued_timeout = 480
+  depends_on     = [aws_iam_role.codebuild]
+  service_role   = aws_iam_role.codebuild.arn
 
   tags = {
     Name = "${local.project}-codebuild-install-project"
@@ -51,23 +51,23 @@ resource "aws_codebuild_project" "install" {
     image_pull_credentials_type = "CODEBUILD"
     privileged_mode             = false
     type                        = "LINUX_CONTAINER"
-          
+
     environment_variable {
       name  = "PARAMETERSTORE"
-      value = "${aws_ssm_parameter.env.name}"
+      value = aws_ssm_parameter.env.name
       type  = "PARAMETER_STORE"
     }
-    
+
     environment_variable {
       name  = "PHP_VERSION"
-      value = "${var.app["php_version"]}"
+      value = var.app["php_version"]
       type  = "PLAINTEXT"
     }
   }
 
   vpc_config {
-    vpc_id             = aws_vpc.this.id
-    subnets            = values(aws_subnet.this).*.id
+    vpc_id  = aws_vpc.this.id
+    subnets = values(aws_subnet.this).*.id
     security_group_ids = [
       aws_security_group.ec2.id
     ]
@@ -86,7 +86,7 @@ resource "aws_codebuild_project" "install" {
   }
 
   source {
-    buildspec           = "${file("${abspath(path.root)}/codepipeline/installspec.yml")}"
+    buildspec           = file("${abspath(path.root)}/codepipeline/installspec.yml")
     git_clone_depth     = 0
     insecure_ssl        = false
     report_build_status = false
@@ -101,8 +101,8 @@ resource "aws_codepipeline" "install" {
   name       = "${local.project}-codepipeline-install"
   depends_on = [aws_iam_role.codepipeline]
   role_arn   = aws_iam_role.codepipeline.arn
-  tags       = {
-     Name    = "${local.project}-codepipeline-install"
+  tags = {
+    Name = "${local.project}-codepipeline-install"
   }
 
   artifact_store {
@@ -116,11 +116,11 @@ resource "aws_codepipeline" "install" {
     action {
       category = "Source"
       configuration = {
-        "ConnectionArn"         = aws_codestarconnections_connection.github[each.key].arn
-        "FullRepositoryId"      = var.app["source_repo"]
-        "BranchName"            = "main"
-        "OutputArtifactFormat"  = "CODEBUILD_CLONE_REF"
-        "PollForSourceChanges"  = "false"
+        "ConnectionArn"        = aws_codestarconnections_connection.github[each.key].arn
+        "FullRepositoryId"     = var.app["source_repo"]
+        "BranchName"           = "main"
+        "OutputArtifactFormat" = "CODEBUILD_CLONE_REF"
+        "PollForSourceChanges" = "false"
       }
       input_artifacts = []
       name            = "Source"
@@ -128,9 +128,9 @@ resource "aws_codepipeline" "install" {
       output_artifacts = [
         "SourceArtifact",
       ]
-      owner     = "AWS"
-      provider  = "CodeStarSourceConnection"
-      version   = "1"
+      owner    = "AWS"
+      provider = "CodeStarSourceConnection"
+      version  = "1"
     }
   }
 
@@ -138,11 +138,11 @@ resource "aws_codepipeline" "install" {
     name = "Build"
 
     action {
-      name     = "Approval"
-      category = "Approval"
-      owner    = "AWS"
-      provider = "Manual"
-      version  = "1"
+      name      = "Approval"
+      category  = "Approval"
+      owner     = "AWS"
+      provider  = "Manual"
+      version   = "1"
       run_order = 1
       configuration = {
         NotificationArn = aws_sns_topic.default.arn
@@ -177,10 +177,10 @@ resource "aws_codepipeline" "install" {
     action {
       category = "Deploy"
       configuration = {
-                BucketName = aws_s3_bucket.this["backup"].bucket
-                Extract    = false
-                ObjectKey  = "deploy/${local.project}-install.zip"
-                }
+        BucketName = aws_s3_bucket.this["backup"].bucket
+        Extract    = false
+        ObjectKey  = "deploy/${local.project}-install.zip"
+      }
       input_artifacts = [
         "BuildArtifact",
       ]

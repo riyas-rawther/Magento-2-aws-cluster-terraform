@@ -12,7 +12,7 @@ resource "aws_ssm_document" "codecommit_nginx" {
   document_type   = "Command"
   document_format = "YAML"
   target_type     = "/AWS::EC2::Instance"
-  content = <<EOT
+  content         = <<EOT
 ---
 schemaVersion: "2.2"
 description: "Pull nginx ${each.key} configuration changes from CodeCommit"
@@ -59,10 +59,10 @@ resource "aws_cloudwatch_event_target" "codecommit_nginx" {
   target_id = "${local.project}-Nginx-${title(each.key)}-Config-Deployment-Script"
   arn       = aws_ssm_document.codecommit_nginx[each.key].arn
   role_arn  = aws_iam_role.eventbridge_service_role.arn
- 
-run_command_targets {
+
+  run_command_targets {
     key    = "tag:Name"
     values = [aws_launch_template.this[each.key].tag_specifications[0].tags.Name]
   }
 }
-      
+

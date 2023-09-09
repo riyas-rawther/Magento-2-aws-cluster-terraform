@@ -24,21 +24,21 @@ resource "random_password" "this" {
 # Generate random string
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "random_string" "this" {
-  for_each       = toset(var.string)
-  length         = (each.key == "id_prefix" ? 3 : 7)
-  lower          = true
-  number         = true
-  special        = false
-  upper          = false
+  for_each = toset(var.string)
+  length   = (each.key == "id_prefix" ? 3 : 7)
+  lower    = true
+  number   = true
+  special  = false
+  upper    = false
 }
 # # ---------------------------------------------------------------------------------------------------------------------#
 # Generate random stirng for s3
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "random_string" "s3" {
-  for_each       = var.s3
-  length         = 7
-  lower          = true
-  number         = true
-  special        = false
-  upper          = false
+  for_each = var.s3
+  length   = 7
+  lower    = true
+  number   = true
+  special  = false
+  upper    = false
 }

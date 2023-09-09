@@ -7,11 +7,11 @@
 # Create alert when your budget thresholds are forecasted to exceed
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "aws_budgets_budget" "all" {
-  name              = "${local.project}-budget-monthly-forecasted"
-  budget_type       = "COST"
-  limit_amount      = "2000"
-  limit_unit        = "USD"
-  time_unit         = "MONTHLY"
+  name         = "${local.project}-budget-monthly-forecasted"
+  budget_type  = "COST"
+  limit_amount = "2000"
+  limit_unit   = "USD"
+  time_unit    = "MONTHLY"
 
   notification {
     comparison_operator        = "GREATER_THAN"

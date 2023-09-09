@@ -7,13 +7,13 @@
 # Create Application Load Balancers
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "aws_lb" "this" {
-  for_each           = toset(var.alb["type"])
-  name               = "${local.project}-${each.key}-alb"
-  internal           = (each.key == "inner" ? true : false)
-  load_balancer_type = "application"
+  for_each                   = toset(var.alb["type"])
+  name                       = "${local.project}-${each.key}-alb"
+  internal                   = (each.key == "inner" ? true : false)
+  load_balancer_type         = "application"
   drop_invalid_header_fields = true
-  security_groups    = [(each.key == "inner" ? aws_security_group.inner_alb.id : aws_security_group.outer_alb.id)]
-  subnets            = values(aws_subnet.this).*.id
+  security_groups            = [(each.key == "inner" ? aws_security_group.inner_alb.id : aws_security_group.outer_alb.id)]
+  subnets                    = values(aws_subnet.this).*.id
   access_logs {
     bucket  = aws_s3_bucket.this["system"].bucket
     prefix  = "ALB"
@@ -27,11 +27,11 @@ resource "aws_lb" "this" {
 # Create Target Groups for Load Balancers
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "aws_lb_target_group" "this" {
-  for_each    = var.ec2
-  name        = "${local.project}-${each.key}"
-  port        = 80
-  protocol    = "HTTP"
-  vpc_id      = aws_vpc.this.id
+  for_each = var.ec2
+  name     = "${local.project}-${each.key}"
+  port     = 80
+  protocol = "HTTP"
+  vpc_id   = aws_vpc.this.id
   health_check {
     path = "/${random_string.this["health_check"].result}"
   }
@@ -40,7 +40,7 @@ resource "aws_lb_target_group" "this" {
 # Create https:// listener for OUTER Load Balancer - forward to varnish
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "aws_lb_listener" "outerhttps" {
-  depends_on = [aws_acm_certificate_validation.default]
+  depends_on        = [aws_acm_certificate_validation.default]
   load_balancer_arn = aws_lb.this["outer"].arn
   port              = "443"
   protocol          = "HTTPS"
@@ -75,13 +75,13 @@ resource "aws_lb_listener" "inner" {
   port              = "80"
   protocol          = "HTTP"
   default_action {
-    type             = "fixed-response"
+    type = "fixed-response"
     fixed_response {
-        content_type = "text/plain"
-        message_body = "No targets are responding to this request"
-        status_code  = "502"
-        }
+      content_type = "text/plain"
+      message_body = "No targets are responding to this request"
+      status_code  = "502"
     }
+  }
 }
 # # ---------------------------------------------------------------------------------------------------------------------#
 # Create conditional listener rule for INNER Load Balancer - forward to frontend
@@ -164,7 +164,7 @@ resource "aws_cloudwatch_metric_alarm" "httpcode_target_5xx_count" {
   alarm_description   = "HTTPCode 5XX count for frontend instances over ${var.alb["error_threshold"]}"
   alarm_actions       = ["${aws_sns_topic.default.arn}"]
   ok_actions          = ["${aws_sns_topic.default.arn}"]
-  
+
   dimensions = {
     TargetGroup  = aws_lb_target_group.this["frontend"].arn
     LoadBalancer = aws_lb.this["inner"].arn
@@ -185,7 +185,7 @@ resource "aws_cloudwatch_metric_alarm" "httpcode_elb_5xx_count" {
   alarm_description   = "HTTPCode 5XX count for loadbalancer over ${var.alb["error_threshold"]}"
   alarm_actions       = ["${aws_sns_topic.default.arn}"]
   ok_actions          = ["${aws_sns_topic.default.arn}"]
-  
+
   dimensions = {
     LoadBalancer = aws_lb.this["outer"].arn
   }

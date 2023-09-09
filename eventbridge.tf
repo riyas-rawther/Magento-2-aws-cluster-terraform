@@ -7,8 +7,8 @@
 # Create EventBridge service role
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "aws_iam_role" "eventbridge_service_role" {
-  name = "${local.project}-EventBridgeServiceRole"
-  description = "Provides EventBridge manage events on your behalf."
+  name               = "${local.project}-EventBridgeServiceRole"
+  description        = "Provides EventBridge manage events on your behalf."
   assume_role_policy = <<EOF
 {
  "Version": "2012-10-17",
@@ -29,8 +29,8 @@ EOF
 # Create policy for EventBridge role to start CodePipeline
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "aws_iam_policy" "eventbridge_service_role" {
-  name = "${local.project}-start-codepipeline"
-  path = "/service-role/"
+  name   = "${local.project}-start-codepipeline"
+  path   = "/service-role/"
   policy = <<EOF
 {
     "Version": "2012-10-17",

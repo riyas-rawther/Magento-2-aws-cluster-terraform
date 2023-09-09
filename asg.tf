@@ -8,20 +8,20 @@
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "aws_launch_template" "this" {
   for_each = var.ec2
-  name = "${local.project}-${each.key}-ltpl"
+  name     = "${local.project}-${each.key}-ltpl"
   iam_instance_profile { name = aws_iam_instance_profile.ec2[each.key].name }
-  image_id = element(values(data.external.packer[each.key].result), 0)
+  image_id      = element(values(data.external.packer[each.key].result), 0)
   instance_type = each.value
   monitoring { enabled = var.asg["monitoring"] }
-  network_interfaces { 
+  network_interfaces {
     associate_public_ip_address = true
-    security_groups = [aws_security_group.ec2.id]
+    security_groups             = [aws_security_group.ec2.id]
   }
   dynamic "tag_specifications" {
-    for_each = toset(["instance","volume"])
+    for_each = toset(["instance", "volume"])
     content {
-       resource_type = tag_specifications.key
-       tags = merge(data.aws_default_tags.this.tags,{ Name = "${local.project}-${each.key}-ec2" })
+      resource_type = tag_specifications.key
+      tags          = merge(data.aws_default_tags.this.tags, { Name = "${local.project}-${each.key}-ec2" })
     }
   }
   metadata_options {
@@ -30,7 +30,7 @@ resource "aws_launch_template" "this" {
     http_put_response_hop_limit = 1
     instance_metadata_tags      = "enabled"
   }
-  user_data = filebase64("${abspath(path.root)}/user_data/${each.key}")
+  user_data              = filebase64("${abspath(path.root)}/user_data/${each.key}")
   update_default_version = true
   lifecycle {
     create_before_destroy = true
@@ -43,15 +43,15 @@ resource "aws_launch_template" "this" {
 # Create Autoscaling Groups
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "aws_autoscaling_group" "this" {
-  for_each = var.ec2
-  name = "${local.project}-${each.key}-asg"
-  vpc_zone_identifier = values(aws_subnet.this).*.id
-  desired_capacity    = var.asg["desired_capacity"]
-  min_size            = var.asg["min_size"]
-  max_size            = var.asg["max_size"]
+  for_each                  = var.ec2
+  name                      = "${local.project}-${each.key}-asg"
+  vpc_zone_identifier       = values(aws_subnet.this).*.id
+  desired_capacity          = var.asg["desired_capacity"]
+  min_size                  = var.asg["min_size"]
+  max_size                  = var.asg["max_size"]
   health_check_grace_period = var.asg["health_check_grace_period"]
   health_check_type         = var.asg["health_check_type"]
-  target_group_arns  = [aws_lb_target_group.this[each.key].arn]
+  target_group_arns         = [aws_lb_target_group.this[each.key].arn]
   dynamic "warm_pool" {
     for_each = var.asg["warm_pool"] == "enabled" ? [var.ec2] : []
     content {
@@ -65,13 +65,13 @@ resource "aws_autoscaling_group" "this" {
     version = "$Latest"
   }
   instance_refresh {
-     strategy = "Rolling"
+    strategy = "Rolling"
   }
   lifecycle {
     create_before_destroy = true
   }
   dynamic "tag" {
-    for_each = merge(data.aws_default_tags.this.tags,{Name="${local.project}-${each.key}-asg"})
+    for_each = merge(data.aws_default_tags.this.tags, { Name = "${local.project}-${each.key}-asg" })
     content {
       key                 = tag.key
       value               = tag.value
@@ -83,8 +83,8 @@ resource "aws_autoscaling_group" "this" {
 # Create Autoscaling groups actions for SNS topic email alerts
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "aws_autoscaling_notification" "this" {
-for_each = aws_autoscaling_group.this 
-group_names = [
+  for_each = aws_autoscaling_group.this
+  group_names = [
     aws_autoscaling_group.this[each.key].name
   ]
 
@@ -122,7 +122,7 @@ resource "aws_cloudwatch_metric_alarm" "scaleout" {
   statistic           = "Average"
   threshold           = var.asp["out_threshold"]
   dimensions = {
-    AutoScalingGroupName  = aws_autoscaling_group.this[each.key].name
+    AutoScalingGroupName = aws_autoscaling_group.this[each.key].name
   }
   alarm_description = "${each.key} scale-out alarm - CPU exceeds ${var.asp["out_threshold"]} percent"
   alarm_actions     = [aws_autoscaling_policy.scaleout[each.key].arn]
@@ -152,7 +152,7 @@ resource "aws_cloudwatch_metric_alarm" "scalein" {
   statistic           = "Average"
   threshold           = var.asp["in_threshold"]
   dimensions = {
-    AutoScalingGroupName  = aws_autoscaling_group.this[each.key].name
+    AutoScalingGroupName = aws_autoscaling_group.this[each.key].name
   }
   alarm_description = "${each.key} scale-in alarm - CPU less than ${var.asp["in_threshold"]} percent"
   alarm_actions     = [aws_autoscaling_policy.scalein[each.key].arn]

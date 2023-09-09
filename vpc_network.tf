@@ -57,8 +57,8 @@ resource "aws_route_table_association" "this" {
 # Create DHCP options in our dedicated VPC
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "aws_vpc_dhcp_options" "this" {
-  domain_name          = "${data.aws_region.current.name}.compute.internal"
-  domain_name_servers  = ["AmazonProvidedDNS"]
+  domain_name         = "${data.aws_region.current.name}.compute.internal"
+  domain_name_servers = ["AmazonProvidedDNS"]
   tags = {
     Name = "${local.project}-dhcp"
   }

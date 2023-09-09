@@ -17,7 +17,7 @@ resource "aws_config_config_rule" "this" {
   }
   dynamic "scope" {
     for_each = each.value == "" ? [] : [each.value]
-      content {
+    content {
       compliance_resource_types = ["${scope.value}"]
     }
   }
