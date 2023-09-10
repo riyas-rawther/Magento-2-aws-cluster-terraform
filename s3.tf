@@ -14,6 +14,14 @@ resource "aws_s3_bucket" "this" {
     Name = "${local.project}-${random_string.s3[each.key].id}-${each.key}"
   }
 }
+
+resource "aws_s3_bucket_ownership_controls" "this" {
+  for_each = var.s3
+  bucket = "${local.project}-${random_string.s3[each.key].id}-${each.key}"
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
 # # ---------------------------------------------------------------------------------------------------------------------#
 # Create S3 bucket ACL
 # # ---------------------------------------------------------------------------------------------------------------------#
@@ -66,7 +74,7 @@ resource "aws_s3_bucket_policy" "media" {
         Action = "s3:GetObject"
         Effect = "Allow"
         Principal = {
-          AWS = aws_cloudfront_origin_access_identity.this.iam_arn
+          "Service": "cloudfront.amazonaws.com"
         }
         Resource = [
           "${aws_s3_bucket.this["media"].arn}/*.jpg",
@@ -80,7 +88,7 @@ resource "aws_s3_bucket_policy" "media" {
         Action = ["s3:PutObject"],
         Effect = "Allow"
         Principal = {
-          AWS = values(aws_iam_instance_profile.ec2)[*].arn
+          "Service": "cloudfront.amazonaws.com"
         }
         Resource = [
           "${aws_s3_bucket.this["media"].arn}",
@@ -96,7 +104,7 @@ resource "aws_s3_bucket_policy" "media" {
         Action = ["s3:GetObject", "s3:GetObjectAcl"],
         Effect = "Allow"
         Principal = {
-          AWS = values(aws_iam_instance_profile.ec2)[*].arn
+          "Service": "cloudfront.amazonaws.com"
         }
         Resource = [
           "${aws_s3_bucket.this["media"].arn}",
@@ -107,7 +115,7 @@ resource "aws_s3_bucket_policy" "media" {
         Action = ["s3:GetBucketLocation", "s3:ListBucket"],
         Effect = "Allow"
         Principal = {
-          AWS = values(aws_iam_instance_profile.ec2)[*].arn
+          "Service": "cloudfront.amazonaws.com"
         }
         Resource = "${aws_s3_bucket.this["media"].arn}"
       },
@@ -132,9 +140,7 @@ resource "aws_s3_bucket_policy" "system" {
           Effect   = "Allow"
           Resource = "${aws_s3_bucket.this["system"].arn}/ALB/AWSLogs/${data.aws_caller_identity.current.account_id}/*"
           Principal = {
-            AWS = [
-              data.aws_elb_service_account.current.arn
-            ]
+            "Service": "cloudfront.amazonaws.com"
           }
         },
         {
