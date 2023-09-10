@@ -6,9 +6,10 @@
 # # ---------------------------------------------------------------------------------------------------------------------#
 # Create AWS WAFv2 rules
 # # ---------------------------------------------------------------------------------------------------------------------#
+
 resource "aws_wafv2_web_acl" "this" {
   name        = "${local.project}-WAF-Protections"
-  # provider    = aws.useast2
+  provider    = aws.east
   scope       = "CLOUDFRONT"
   description = "${local.project}-WAF-Protections"
 
