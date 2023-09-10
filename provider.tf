@@ -28,11 +28,18 @@ terraform {
 }
 
 provider "aws" {
-#  alias  = "useast2"
+  alias = "east"
+  region = "us-east-1"
+ # profile = "foa"
+  }
+
+provider "aws" {
+  alias  = "west"
+# alias is used becuase WAF rule with CloudFront should be created at N. Virginia
   region = "us-west-2"
   # access_key = ""
   # secret_key = ""
-  profile = "alignminds"
+ # profile = "foa"
   default_tags {
     tags = {
       Managed     = "terraform"
