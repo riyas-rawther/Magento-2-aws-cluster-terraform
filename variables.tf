@@ -45,7 +45,7 @@ variable "app" {
     app_version            = "2"
     cidr_block             = "172.30.0.0/16"
     brand                  = "magenx"
-    domain                 = "magenx.org"
+    domain                 = "m2-tf.staging.foagroup.com"
     admin_email            = "admin@magenx.org"
     admin_login            = "admin"
     admin_firstname        = "Hereis"
@@ -86,8 +86,8 @@ variable "rds" {
     storage_type                    = "gp2"
     storage_encrypted               = true
     engine                          = "mariadb"
-    engine_version                  = "10.5.12"
-    family                          = "mariadb10.5"
+    engine_version                  = "10.11.5"
+    family                          = "mariadb10.11"
     instance_class                  = "db.m6g.large"
     skip_final_snapshot             = true
     multi_az                        = false
