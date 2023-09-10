@@ -7,6 +7,9 @@
 # Create Launch Template for Autoscaling Groups - user_data converted
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "aws_launch_template" "this" {
+  instance_market_options {
+    market_type = "spot"
+  }
   for_each = var.ec2
   name     = "${local.project}-${each.key}-ltpl"
   iam_instance_profile { name = aws_iam_instance_profile.ec2[each.key].name }
