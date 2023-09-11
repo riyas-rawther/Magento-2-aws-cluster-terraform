@@ -19,6 +19,9 @@ resource "aws_lb" "this" {
     prefix  = "ALB"
     enabled = true
   }
+  lifecycle {
+    create_before_destroy = true
+  }
   tags = {
     Name = "${local.project}-${each.key}-alb"
   }
