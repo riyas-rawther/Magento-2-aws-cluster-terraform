@@ -140,7 +140,8 @@ resource "aws_s3_bucket_policy" "system" {
           Effect   = "Allow"
           Resource = "${aws_s3_bucket.this["system"].arn}/ALB/AWSLogs/${data.aws_caller_identity.current.account_id}/*"
           Principal = {
-            "Service": "cloudfront.amazonaws.com"
+             type        = "AWS"
+             identifiers = [data.aws_elb_service_account.current.arn]
           }
         },
         {
