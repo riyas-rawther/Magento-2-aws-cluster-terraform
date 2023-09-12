@@ -9,9 +9,9 @@
 # # ---------------------------------------------------------------------------------------------------------------------#
 terraform {
   backend "s3" {
-    bucket         = "state"
-    key            = "${var.app["brand"]}/${data.aws_region.current.name}/terraform.tfstate"
-    region         = data.aws_region.current.name
+    bucket         = "terraform-state-terraform-state"
+    key            = "m2-dev/terraform.tfstate"
+    region         = "us-west-2"
     dynamodb_table = aws_dynamodb_table.lock.id
   }
 }
