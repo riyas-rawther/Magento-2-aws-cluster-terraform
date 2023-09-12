@@ -207,9 +207,7 @@ variable "redis_parameters" {
   {
     name  = "cluster-enabled"
     value = "no"
-  },
-    name  = "maxmemory-policy"
-    value = "allkeys-lfu"
+  
   }
  ]
 }
