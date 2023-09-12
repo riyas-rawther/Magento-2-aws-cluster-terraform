@@ -9,7 +9,7 @@
 resource "aws_acm_certificate" "default" {
   domain_name               = "${var.app["domain"]}"
   subject_alternative_names = ["*.${var.app["domain"]}"]
-  validation_method         = "EMAIL"
+  validation_method         = "DNS"
 
   lifecycle {
     create_before_destroy   = true
