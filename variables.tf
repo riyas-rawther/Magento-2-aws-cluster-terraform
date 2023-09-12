@@ -47,7 +47,7 @@ variable "app" {
     source_repo      = "magenx/Magento-2"
     app_version      = "2"
     cidr_block       = "172.30.0.0/16"
-    brand            = "m2-poc-dev"
+    brand            = "m2"
     domain           = "m2-poc.alignminds.in"
     admin_email      = "admin@magenx.org"
     admin_login      = "admin"
@@ -104,6 +104,7 @@ variable "rds" {
 variable "rds_max_connection_count" {
   description = "Map 6g. class RDS max connection count"
   default = {
+     "db.t3.small"     = "120"
      "db.m6g.large"    = "683"
      "db.m6g.xlarge"   = "1365"
      "db.r6g.large"    = "1365"
