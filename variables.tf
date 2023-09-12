@@ -31,14 +31,14 @@ variable "string" {
 variable "ec2" {
   description  = "EC2 instances names and types included in AutoScaling groups"
   default      = {
-    frontend   = "c6g.xlarge"
-    admin      = "c6g.xlarge"
+    frontend   = "c6g.medium"
+    admin      = "c6g.medium"
    }
 }
 
 variable "fastly" {
   description  = "Enable Fastly CDN. If disabled = Varnish cache will be installed locally on EC2 frontend"
-  default      = "enabled"
+  default      = "false"
 }
 
 variable "app" {
@@ -48,7 +48,7 @@ variable "app" {
     app_version      = "2"
     cidr_block       = "172.30.0.0/16"
     brand            = "magenx"
-    domain           = "magenx.org"
+    domain           = "m2-poc.alignminds.in"
     admin_email      = "admin@magenx.org"
     admin_login      = "admin"
     admin_firstname  = "Hereis"
@@ -69,7 +69,7 @@ variable "opensearch" {
   description      = "Map OpenSearch configuration values"
   default  = {
     engine_version         = "OpenSearch_1.2"
-    instance_type          = "m6g.large.search"
+    instance_type          = "t2.micro.search"
     instance_count         = "1"
     ebs_enabled            = true
     volume_type            = "gp2"
@@ -89,7 +89,7 @@ variable "rds" {
     engine                 = "mariadb"
     engine_version         = "10.5.12"
     family                 = "mariadb10.5"
-    instance_class         = "db.m6g.large"
+    instance_class         = "db.t3.micro"
     skip_final_snapshot    = true
     multi_az               = false
     enabled_cloudwatch_logs_exports = "error"
@@ -184,7 +184,7 @@ variable "rabbitmq" {
   default  = {
     engine_version         = "3.9.13"
     deployment_mode        = "CLUSTER_MULTI_AZ"
-    host_instance_type     = "mq.m5.large"
+    host_instance_type     = "mq.t2.micro"
   }
 }
 
@@ -192,7 +192,7 @@ variable "redis" {
   description      = "Map ElastiCache Redis configuration values"
   default  = {
     num_cache_clusters         = "1"
-    node_type                  = "cache.m6g.large"
+    node_type                  = "cache.t3.micro"
     name                       = ["session", "cache"]
     engine_version                = "6.x"
     family                        = "redis6.x"
