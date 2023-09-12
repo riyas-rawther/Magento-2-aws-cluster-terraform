@@ -174,7 +174,7 @@ resource "aws_cloudwatch_metric_alarm" "rds_max_connections" {
   namespace           = "AWS/RDS"
   period              = "600"
   statistic           = "Average"
-  threshold           = ceil((80 / 100) * var.max_connection_count[var.rds["instance_class"]])
+  threshold           = ceil((80 / 100) * var.rds_max_connection_count[var.rds["instance_class"]])
   alarm_description   = "Average connections over last 10 minutes is too high"
   alarm_actions       = ["${aws_sns_topic.default.arn}"]
   ok_actions          = ["${aws_sns_topic.default.arn}"]
