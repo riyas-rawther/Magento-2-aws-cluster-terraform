@@ -7,9 +7,9 @@ exit 1
 fi
 
 ## remove old aws cli v1
-apt-get -y remove awscli
-apt-get update
-apt-get -qqy install jq unzip
+sudo apt-get -y remove awscli
+sudo apt-get update
+sudo apt-get -qqy install jq unzip 
 
 ## get latest aws cli v2
 cd /tmp
@@ -25,8 +25,8 @@ declare -A parameter
 while IFS== read -r key value; do parameter["$key"]="$value"; done < <(echo ${_PARAMETER} | jq -r 'to_entries[] | .key + "=" + .value')
 
 ## installation
-apt-get -qqy install ${parameter["LINUX_PACKAGES"]}
-pip3 install git-remote-codecommit
+sudo apt-get -qqy install ${parameter["LINUX_PACKAGES"]}
+pipx install git-remote-codecommit
 
 ## create user
 useradd -d /home/${parameter["BRAND"]} -s /sbin/nologin ${parameter["BRAND"]}
