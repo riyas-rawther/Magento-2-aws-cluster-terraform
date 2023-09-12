@@ -183,7 +183,7 @@ variable "rds_parameters" {
 variable "rabbitmq" {
   description      = "Map RabbitMQ configuration values"
   default  = {
-    engine_version         = "5.15.9"
+    engine_version         = "3.11.16"
     deployment_mode        = "SINGLE_INSTANCE"
     host_instance_type     = "mq.t2.micro"
   }
