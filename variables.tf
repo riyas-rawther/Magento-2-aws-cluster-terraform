@@ -47,7 +47,7 @@ variable "app" {
     source_repo      = "magenx/Magento-2"
     app_version      = "2"
     cidr_block       = "172.30.0.0/16"
-    brand            = "magenx"
+    brand            = "m2-poc-dev"
     domain           = "m2-poc.alignminds.in"
     admin_email      = "admin@magenx.org"
     admin_login      = "admin"
