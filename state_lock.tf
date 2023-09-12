@@ -12,7 +12,7 @@ terraform {
     bucket         = "terraform-state-terraform-state"
     key            = "m2-dev/terraform.tfstate"
     region         = "us-west-2"
-    dynamodb_table = aws_dynamodb_table.lock.id
+    dynamodb_table = "terraform_state"
   }
 }
 # # ---------------------------------------------------------------------------------------------------------------------#
