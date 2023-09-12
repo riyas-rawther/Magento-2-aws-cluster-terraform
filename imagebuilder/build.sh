@@ -69,7 +69,7 @@ apt-get -qq update -o Dir::Etc::sourcelist="sources.list.d/nginx.list" -o Dir::E
 apt-get -qq update -o Dir::Etc::sourcelist="sources.list.d/php.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0"
 
 _PHP_PACKAGES+=(${parameter["PHP_PACKAGES"]})
-apt-get -qqy install nginx php-pear php${parameter["PHP_VERSION"]} ${_PHP_PACKAGES[@]/#/php${parameter["PHP_VERSION"]}-}
+sudo apt-get -qqy install nginx php-pear php${parameter["PHP_VERSION"]} ${_PHP_PACKAGES[@]/#/php${parameter["PHP_VERSION"]}-}
 
 setfacl -R -m u:nginx:r-X,d:u:nginx:r-X ${parameter["WEB_ROOT_PATH"]}
 
@@ -183,7 +183,7 @@ END
 
 if [ "${parameter["FASTLY"]}" == "disabled" ] && [ "${_INSTANCE_NAME}" != "admin" ]; then
 
-apt-get -qqy install varnish
+sudo apt-get -qqy install varnish
 
 cd /etc/varnish
 
