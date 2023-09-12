@@ -48,7 +48,7 @@ mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=
 mkdir -p /mnt/efs/data/{var,pub/media}
 chown -R ${parameter["BRAND"]}:${parameter["PHP_USER"]} /mnt/efs/
 find /mnt/efs -type d -exec chmod 2770 {} \;
-umount /mnt/efs
+#umount /mnt/efs
 
 echo "${parameter["EFS_DNS_TARGET"]}:/data/var ${parameter["WEB_ROOT_PATH"]}/var nfs4 nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,_netdev 0 0" >> /etc/fstab
 echo "${parameter["EFS_DNS_TARGET"]}:/data/pub/media ${parameter["WEB_ROOT_PATH"]}/pub/media nfs4 nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,_netdev 0 0" >> /etc/fstab
