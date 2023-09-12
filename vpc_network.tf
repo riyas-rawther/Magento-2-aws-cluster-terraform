@@ -91,7 +91,7 @@ resource "aws_nat_gateway" "private" {
 # # ---------------------------------------------------------------------------------------------------------------------#
 resource "aws_eip" "private" {
   depends_on = [aws_internet_gateway.this]
-  domain        = vpc
+  vpc        = true
 
   tags = {
     Name = "${local.project}-eip-nat-gateway"
