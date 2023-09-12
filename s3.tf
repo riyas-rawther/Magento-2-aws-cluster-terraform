@@ -14,6 +14,13 @@ resource "aws_s3_bucket" "this" {
     Name        = "${local.project}-${random_string.s3[each.key].id}-${each.key}"
   }
 }
+resource "aws_s3_bucket_ownership_controls" "this" {
+  for_each = var.s3
+  bucket = "${local.project}-${random_string.s3[each.key].id}-${each.key}"
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
 # # ---------------------------------------------------------------------------------------------------------------------#
 # Create S3 bucket ACL
 # # ---------------------------------------------------------------------------------------------------------------------#
