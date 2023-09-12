@@ -248,28 +248,4 @@ resource "aws_security_group" "efs" {
 # # ---------------------------------------------------------------------------------------------------------------------#
 # Create security group and rules for OpenSearch
 # # ---------------------------------------------------------------------------------------------------------------------#
-resource "aws_security_group" "opensearch" {
-  name        = "${local.project}-opensearch-sg"
-  description = "Security group rules for ${local.project} OpenSearch"
-  vpc_id      = aws_vpc.this.id
 
-  ingress {
-      description      = "Allow all inbound traffic to OpenSearch port from EC2"
-      from_port        = 443
-      to_port          = 443
-      protocol         = "-1"
-      security_groups  = [aws_security_group.ec2.id]
-    }
-  
-  egress {
-      description      = "Allow all outbound traffic to EC2 port from OpenSearch"
-      from_port        = 443
-      to_port          = 443
-      protocol         = "-1"
-      security_groups  = [aws_security_group.ec2.id]
-    }
-
-  tags = {
-    Name = "${local.project}-opensearch-sg"
-  }
-}
