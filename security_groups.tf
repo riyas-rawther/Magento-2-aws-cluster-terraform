@@ -123,15 +123,6 @@ resource "aws_security_group_rule" "ec2_ses_out" {
     security_group_id = aws_security_group.ec2.id
     }
 
-resource "aws_security_group_rule" "ec2_opensearch_out" {
-    type        = "egress"
-    description = "Allow outbound traffic on the instance OpenSearch port"
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    source_security_group_id = aws_security_group.opensearch.id
-    security_group_id = aws_security_group.ec2.id
-    }
 
 resource "aws_security_group_rule" "ec2_http_in_ec2" {
     type        = "ingress"
