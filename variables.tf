@@ -182,8 +182,8 @@ variable "rds_parameters" {
 variable "rabbitmq" {
   description      = "Map RabbitMQ configuration values"
   default  = {
-    engine_version         = "3.9.13"
-    deployment_mode        = "CLUSTER_MULTI_AZ"
+    engine_version         = "5.15.9"
+    deployment_mode        = "SINGLE_INSTANCE"
     host_instance_type     = "mq.t2.micro"
   }
 }
