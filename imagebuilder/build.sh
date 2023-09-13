@@ -22,8 +22,7 @@ rm -rf /root/aws/{dist,install}
 ## get environment variables from aws parameter store
 _PARAMETER=$(aws ssm get-parameter --name "${_PARAMETERSTORE_NAME}" --query 'Parameter.Value' --output text)
 declare -A parameter
-while IFS== read -r key value; do parameter["$key"]="$value"; done < <(echo ${_PARAMETER} | jq -r 'to_entries[] | .key + "=" + .value')
-
+while IFS== read -r key value; do  parameter["$key"]="$value"; done < <(jq -r 'to_entries[] | .key + "=" + (.value|tostring)' <<< "$_PARAMETER")
 ## installation
 sudo apt-get -qqy install ${parameter["LINUX_PACKAGES"]}
 pipx install git-remote-codecommit
