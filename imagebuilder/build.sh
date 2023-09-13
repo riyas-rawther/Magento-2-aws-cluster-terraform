@@ -24,8 +24,9 @@ _PARAMETER=$(aws ssm get-parameter --name "${_PARAMETERSTORE_NAME}" --query 'Par
 declare -A parameter
 while IFS== read -r key value; do  parameter["$key"]="$value"; done < <(jq -r 'to_entries[] | .key + "=" + (.value|tostring)' <<< "$_PARAMETER")
 ## installation
-sudo apt-get -qqy install ${parameter["LINUX_PACKAGES"]}
-pipx install git-remote-codecommit
+sudo apt -qqy install ${parameter["LINUX_PACKAGES"]}
+sudo apt autoremove -y
+pip install --break-system-packages git-remote-codecommit
 
 ## create user
 useradd -d /home/${parameter["BRAND"]} -s /sbin/nologin ${parameter["BRAND"]}
@@ -64,6 +65,7 @@ echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] http://nginx
 ## install php + phpmyadmin
 wget -qO /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
 echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list
+sudo apt install -y apt-transport-https lsb-release ca-certificates wget 
 
 apt-get -qq update -o Dir::Etc::sourcelist="sources.list.d/nginx.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0"
 apt-get -qq update -o Dir::Etc::sourcelist="sources.list.d/php.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0"
