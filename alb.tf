@@ -87,12 +87,6 @@ resource "aws_lb_listener_rule" "frontend" {
       values = [var.app["domain"]]
     }
   }
-  condition {
-    http_header {
-      http_header_name = "X-Magenx-Header"
-      values           = [random_uuid.this.result]
-    }
-  }
 }
 # # ---------------------------------------------------------------------------------------------------------------------#
 # Create conditional listener rule for Load Balancer - forward to admin
